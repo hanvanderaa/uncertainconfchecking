@@ -1,0 +1,168 @@
+<pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+   <net id="s00000645##s00004558" type="http://www.pnml.org/version-2009/grammar/ptnet">
+      <toolspecific tool="StochasticPetriNet" version="0.2">
+         <property key="timeUnit">minutes</property>
+         <property key="executionPolicy">race (enabling memory)</property>
+      </toolspecific>
+      <page id="p1">
+         <transition id="n0">
+            <graphics>
+               <dimension x="25.0" y="20.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">NORMAL</property>
+               <property key="weight">1.0</property>
+               <property key="distributionParameters">100.0;10.0</property>
+               <property key="priority">0</property>
+            </toolspecific>
+            <name>
+               <text>s00004559_task</text>
+            </name>
+         </transition>
+         <transition id="n1">
+            <graphics>
+               <dimension x="25.0" y="20.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">NORMAL</property>
+               <property key="weight">1.0</property>
+               <property key="distributionParameters">100.0;10.0</property>
+               <property key="priority">0</property>
+            </toolspecific>
+            <name>
+               <text>s00004560_task</text>
+            </name>
+         </transition>
+         <transition id="n2">
+            <graphics>
+               <dimension x="25.0" y="20.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">NORMAL</property>
+               <property key="weight">1.0</property>
+               <property key="distributionParameters">100.0;10.0</property>
+               <property key="priority">0</property>
+            </toolspecific>
+            <name>
+               <text>s00004561_task</text>
+            </name>
+         </transition>
+         <transition id="n3">
+            <graphics>
+               <dimension x="25.0" y="20.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">NORMAL</property>
+               <property key="weight">1.0</property>
+               <property key="distributionParameters">100.0;10.0</property>
+               <property key="priority">0</property>
+            </toolspecific>
+            <name>
+               <text>s00004562_task</text>
+            </name>
+         </transition>
+         <transition id="n4">
+            <graphics>
+               <dimension x="25.0" y="20.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">NORMAL</property>
+               <property key="weight">1.0</property>
+               <property key="distributionParameters">100.0;10.0</property>
+               <property key="priority">0</property>
+            </toolspecific>
+            <name>
+               <text>s00004563_task</text>
+            </name>
+         </transition>
+         <place id="n5">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00000940_start</text>
+            </name>
+            <initialMarking>
+               <text>1</text>
+            </initialMarking>
+         </place>
+         <place id="n6">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00000941_end</text>
+            </name>
+         </place>
+         <place id="n7">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00000942_end</text>
+            </name>
+         </place>
+         <place id="n8">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00000943_end</text>
+            </name>
+         </place>
+         <place id="n9">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00000944_end</text>
+            </name>
+         </place>
+         <place id="n10">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00004560_task_place</text>
+            </name>
+         </place>
+         <place id="n11">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00004560_task_place</text>
+            </name>
+         </place>
+         <place id="n12">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00004560_task_place</text>
+            </name>
+         </place>
+         <place id="n13">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00004560_task_place</text>
+            </name>
+         </place>
+         <arc id="a0" source="n1" target="n13"/>
+         <arc id="a1" source="n4" target="n9"/>
+         <arc id="a2" source="n10" target="n0"/>
+         <arc id="a3" source="n2" target="n7"/>
+         <arc id="a4" source="n0" target="n6"/>
+         <arc id="a5" source="n1" target="n12"/>
+         <arc id="a6" source="n13" target="n3"/>
+         <arc id="a7" source="n1" target="n10"/>
+         <arc id="a8" source="n12" target="n2"/>
+         <arc id="a9" source="n5" target="n1"/>
+         <arc id="a10" source="n11" target="n4"/>
+         <arc id="a11" source="n3" target="n8"/>
+         <arc id="a12" source="n1" target="n11"/>
+      </page>
+   </net>
+</pnml>

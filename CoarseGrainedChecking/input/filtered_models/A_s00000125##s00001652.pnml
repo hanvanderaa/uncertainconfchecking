@@ -1,0 +1,285 @@
+<pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+   <net id="s00000125##s00001652" type="http://www.pnml.org/version-2009/grammar/ptnet">
+      <toolspecific tool="StochasticPetriNet" version="0.2">
+         <property key="timeUnit">minutes</property>
+         <property key="executionPolicy">race (enabling memory)</property>
+      </toolspecific>
+      <page id="p1">
+         <transition id="n0">
+            <graphics>
+               <dimension x="25.0" y="20.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">NORMAL</property>
+               <property key="weight">1.0</property>
+               <property key="distributionParameters">100.0;10.0</property>
+               <property key="priority">0</property>
+            </toolspecific>
+            <name>
+               <text>s00001640_process</text>
+            </name>
+         </transition>
+         <transition id="n1">
+            <graphics>
+               <dimension x="25.0" y="20.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">NORMAL</property>
+               <property key="weight">1.0</property>
+               <property key="distributionParameters">100.0;10.0</property>
+               <property key="priority">0</property>
+            </toolspecific>
+            <name>
+               <text>s00001658_task</text>
+            </name>
+         </transition>
+         <transition id="n2">
+            <graphics>
+               <dimension x="25.0" y="20.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">NORMAL</property>
+               <property key="weight">1.0</property>
+               <property key="distributionParameters">100.0;10.0</property>
+               <property key="priority">0</property>
+            </toolspecific>
+            <name>
+               <text>s00001659_task</text>
+            </name>
+         </transition>
+         <transition id="n3">
+            <graphics>
+               <dimension x="25.0" y="20.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">NORMAL</property>
+               <property key="weight">1.0</property>
+               <property key="distributionParameters">100.0;10.0</property>
+               <property key="priority">0</property>
+            </toolspecific>
+            <name>
+               <text>s00001660_task</text>
+            </name>
+         </transition>
+         <transition id="n4">
+            <graphics>
+               <dimension x="25.0" y="20.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">NORMAL</property>
+               <property key="weight">1.0</property>
+               <property key="distributionParameters">100.0;10.0</property>
+               <property key="priority">0</property>
+            </toolspecific>
+            <name>
+               <text>s00001661_task</text>
+            </name>
+         </transition>
+         <transition id="n5">
+            <graphics>
+               <dimension x="25.0" y="20.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">NORMAL</property>
+               <property key="weight">1.0</property>
+               <property key="distributionParameters">100.0;10.0</property>
+               <property key="priority">0</property>
+            </toolspecific>
+            <name>
+               <text>s00001662_task</text>
+            </name>
+         </transition>
+         <transition id="n6">
+            <graphics>
+               <dimension x="25.0" y="20.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">NORMAL</property>
+               <property key="weight">1.0</property>
+               <property key="distributionParameters">100.0;10.0</property>
+               <property key="priority">0</property>
+            </toolspecific>
+            <name>
+               <text>s00001663_task</text>
+            </name>
+         </transition>
+         <transition id="n7">
+            <graphics>
+               <dimension x="25.0" y="20.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">NORMAL</property>
+               <property key="weight">1.0</property>
+               <property key="distributionParameters">100.0;10.0</property>
+               <property key="priority">0</property>
+            </toolspecific>
+            <name>
+               <text>s00001664_task</text>
+            </name>
+         </transition>
+         <transition id="n8">
+            <graphics>
+               <dimension x="15.0" y="15.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">IMMEDIATE</property>
+               <property key="weight">50.0</property>
+               <property key="distributionParameters"></property>
+               <property key="priority">1</property>
+            </toolspecific>
+            <name>
+               <text>s00001655|s00000720</text>
+            </name>
+         </transition>
+         <transition id="n9">
+            <graphics>
+               <dimension x="15.0" y="15.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">IMMEDIATE</property>
+               <property key="weight">30.0</property>
+               <property key="distributionParameters"></property>
+               <property key="priority">1</property>
+            </toolspecific>
+            <name>
+               <text>s00001655|s00000722</text>
+            </name>
+         </transition>
+         <transition id="n10">
+            <graphics>
+               <dimension x="15.0" y="15.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">IMMEDIATE</property>
+               <property key="weight">10.0</property>
+               <property key="distributionParameters"></property>
+               <property key="priority">1</property>
+            </toolspecific>
+            <name>
+               <text>s00001655|s00000725</text>
+            </name>
+         </transition>
+         <transition id="n11">
+            <graphics>
+               <dimension x="15.0" y="15.0"/>
+            </graphics>
+            <toolspecific tool="StochasticPetriNet" version="0.2">
+               <property key="distributionType">IMMEDIATE</property>
+               <property key="weight">10.0</property>
+               <property key="distributionParameters"></property>
+               <property key="priority">1</property>
+            </toolspecific>
+            <name>
+               <text>s00001655|s00000716</text>
+            </name>
+         </transition>
+         <place id="n12">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00000705_start</text>
+            </name>
+            <initialMarking>
+               <text>1</text>
+            </initialMarking>
+         </place>
+         <place id="n13">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00000706_end</text>
+            </name>
+         </place>
+         <place id="n14">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00001655_decision</text>
+            </name>
+         </place>
+         <place id="n15">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00000730_merge</text>
+            </name>
+         </place>
+         <place id="n16">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00001659_task_place</text>
+            </name>
+         </place>
+         <place id="n17">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00001655|s00000720_place</text>
+            </name>
+         </place>
+         <place id="n18">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00001655|s00000722_place</text>
+            </name>
+         </place>
+         <place id="n19">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00001655|s00000725_place</text>
+            </name>
+         </place>
+         <place id="n20">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00001655|s00000716_place</text>
+            </name>
+         </place>
+         <place id="n21">
+            <graphics>
+               <dimension x="12.0" y="12.0"/>
+            </graphics>
+            <name>
+               <text>s00001640_process_place</text>
+            </name>
+         </place>
+         <arc id="a0" source="n11" target="n20"/>
+         <arc id="a1" source="n14" target="n11"/>
+         <arc id="a2" source="n19" target="n4"/>
+         <arc id="a3" source="n3" target="n15"/>
+         <arc id="a4" source="n18" target="n3"/>
+         <arc id="a5" source="n14" target="n8"/>
+         <arc id="a6" source="n7" target="n14"/>
+         <arc id="a7" source="n8" target="n17"/>
+         <arc id="a8" source="n10" target="n19"/>
+         <arc id="a9" source="n20" target="n6"/>
+         <arc id="a10" source="n12" target="n0"/>
+         <arc id="a11" source="n5" target="n13"/>
+         <arc id="a12" source="n21" target="n7"/>
+         <arc id="a13" source="n17" target="n1"/>
+         <arc id="a14" source="n4" target="n15"/>
+         <arc id="a15" source="n9" target="n18"/>
+         <arc id="a16" source="n15" target="n2"/>
+         <arc id="a17" source="n6" target="n15"/>
+         <arc id="a18" source="n14" target="n10"/>
+         <arc id="a19" source="n16" target="n5"/>
+         <arc id="a20" source="n0" target="n21"/>
+         <arc id="a21" source="n1" target="n15"/>
+         <arc id="a22" source="n14" target="n9"/>
+         <arc id="a23" source="n2" target="n16"/>
+      </page>
+   </net>
+</pnml>
