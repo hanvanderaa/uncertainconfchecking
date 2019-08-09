@@ -16,11 +16,15 @@ public class NGramMaxProbabilisticModel extends AbstractProbabilisticModel {
 	private HashMap<String, Integer> nGramMap;
 	private Map<XTraceCoarseGrained, XTrace> bestPermutations;	
 	
-	public NGramMaxProbabilisticModel(XLogCoarseGrained cgLog, int n) {
-		super(cgLog);
-		this.n = n;
-		this.nGramMap = new HashMap<String, Integer>();
+	public NGramMaxProbabilisticModel(int n) {
 		this.modelName = "NGramMaxProbabilisticModel (" + n + ")";
+		this.n = n;
+		
+	}
+	
+	public void initialize(XLogCoarseGrained cgLog) {
+		this.cgLog = cgLog;
+		this.nGramMap = new HashMap<String, Integer>();
 		countNGrams(n);	
 		countNGrams(n - 1);
 		computeMostProbablePermutations(cgLog);
@@ -46,7 +50,7 @@ public class NGramMaxProbabilisticModel extends AbstractProbabilisticModel {
 	private XTrace computeMostProbableTrace(XTraceCoarseGrained cgTrace) {
 		double maxProb = 0.0;
 		XTrace bestPermutation = null;
-		for (XTrace permutation : cgTrace.getPossibleEventSequences()) {
+		for (XTrace permutation : cgTrace.getPossibleResolutions()) {
 			double traceProb = computeNGramProbability(permutation);
 			if (traceProb > maxProb) {
 				maxProb = traceProb;

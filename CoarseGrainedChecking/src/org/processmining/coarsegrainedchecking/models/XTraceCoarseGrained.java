@@ -7,7 +7,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 
 import org.deckfour.xes.extension.std.XConceptExtension;
 import org.deckfour.xes.extension.std.XTimeExtension;
@@ -17,27 +16,49 @@ import org.deckfour.xes.model.XTrace;
 import org.deckfour.xes.model.impl.XAttributeMapImpl;
 import org.deckfour.xes.model.impl.XEventImpl;
 import org.deckfour.xes.model.impl.XTraceImpl;
+import org.processmining.coarsegrainedchecking.plugins.CoarseGrainedConformanceCheckingParameters;
 import org.processmining.coarsegrainedchecking.utils.TimestampGranularity;
 
 import com.google.common.collect.Lists;
 
 public class XTraceCoarseGrained extends XTraceImpl {
 	
+	CoarseGrainedConformanceCheckingParameters parameters;
 	private static final long serialVersionUID = 1L;
+	private TimestampGranularity granularity = null;
 	private ArrayList<HashSet<XEvent>> uncertainTrace = null;
 	private HashSet<HashSet<XEvent>> uncertainSets = null;
 	private HashMap<XEvent,HashSet<XEvent>> uncertainSetMap = null;
 	private HashSet<ArrayList<XEvent>> certainSubtraces = null;
-	private LinkedHashMap<XTrace, Boolean> permutationConformance = null;
-	private TimestampGranularity granularity = null;
+	ArrayList<XTrace> possibleResolutions;
 	private boolean originalIsConformant;
 	private double originalFitness;
+	private boolean resolutionOverflow = false;
 	
-	public XTraceCoarseGrained(XAttributeMap attributeMap, TimestampGranularity granularity) {
-		super(attributeMap);
+	public XTraceCoarseGrained(XTrace trace, TimestampGranularity granularity, CoarseGrainedConformanceCheckingParameters parameters) {
+		super(trace.getAttributes());
+		this.parameters = parameters;
+		this.addAll(trace);
 		this.granularity = granularity;
 		computeMetaInformation();
 	}
+	
+	public XTraceCoarseGrained(TimestampGranularity granularity, CoarseGrainedConformanceCheckingParameters parameters) {
+		super(new XAttributeMapImpl());
+		this.parameters = parameters;
+		this.granularity = granularity;
+	}
+	
+	
+	public XTraceCoarseGrained(XAttributeMap attributeMap, TimestampGranularity granularity, CoarseGrainedConformanceCheckingParameters parameters) {
+		super(attributeMap);
+		this.granularity = granularity;
+		this.parameters = parameters;
+		computeMetaInformation();
+	}
+	
+	
+	
 	
 	public String getOriginalTraceString() {
 		TimestampGranularity temp = this.granularity;
@@ -64,18 +85,7 @@ public class XTraceCoarseGrained extends XTraceImpl {
 		return true;
 	}
 	
-	public XTraceCoarseGrained(XTrace trace, TimestampGranularity granularity) {
-		super(trace.getAttributes());
-		
-		this.addAll(trace);
-		this.granularity = granularity;
-		computeMetaInformation();
-	}
-	
-	public XTraceCoarseGrained(TimestampGranularity granularity) {
-		super(new XAttributeMapImpl());
-		this.granularity = granularity;
-	}
+
 	
 	public void addEvent(String name, int year, int month, int day, int hour, int minute, int second) {
 		XEvent event = new XEventImpl();
@@ -269,14 +279,11 @@ public class XTraceCoarseGrained extends XTraceImpl {
 		}
 	}
 	
-	public void computePermutations() {
+	public void computePossibleResolutions() {
 		ArrayList<XTrace> currentTraces = new ArrayList<XTrace>(); 
 		currentTraces.add(new XTraceImpl(this.getAttributes()));
-		ArrayList<XTrace> permutations =  computePermutations(currentTraces, 0, 0);
-		permutationConformance = new LinkedHashMap<XTrace, Boolean>();
-		for (XTrace perm : permutations) {
-			permutationConformance.put(perm, null);
-		}
+		possibleResolutions =  computePermutations(currentTraces, 0, 0);
+
 	}
 	
 	public boolean hasEqualTimestamps(XEvent event1, XEvent event2) {
@@ -286,21 +293,14 @@ public class XTraceCoarseGrained extends XTraceImpl {
 		return timestamp1.equals(timestamp2);
 	}
 	
-	public Collection<XTrace> getPossibleEventSequences() {
-		return permutationConformance.keySet();
+	public Collection<XTrace> getPossibleResolutions() {
+		return possibleResolutions;
 	}
 	
-	public void setPermutationConformance(XTrace permutation, boolean conf) {
-		permutationConformance.put(permutation, conf);
-	}
-	
-	public boolean getPermutationConformance(XTrace permutation) {
-		return permutationConformance.get(permutation);
-	}
-	
-	
+
 	private ArrayList<XTrace> computePermutations(ArrayList<XTrace> currentTraces, int setIndex, int addedFromSet) {				
-		if (currentTraces.size() >= 500) {
+		if (currentTraces.size() >= parameters.MAX_RESOLUTIONS_PER_TRACE) {
+			this.resolutionOverflow = true;
 			return new ArrayList<XTrace>();
 		}
 		if (addedFromSet == uncertainTrace.get(setIndex).size()) {
@@ -325,7 +325,11 @@ public class XTraceCoarseGrained extends XTraceImpl {
 		return computePermutations(newTraces, setIndex, addedFromSet);
 	}
 
+	public boolean hasResolutionOverflow() {
+		return resolutionOverflow;
+	}
 	
+
 	public String toString() {
 		return getTraceString();
 	}

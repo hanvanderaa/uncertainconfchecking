@@ -14,11 +14,13 @@ public class BinaryRelationProbabilisticModel extends AbstractProbabilisticModel
 	private HashMap<Pair<String, String>, Integer> orderedPairCount;
 	private HashMap<Pair<String, String>, Integer> pairCount;
 	
-	public BinaryRelationProbabilisticModel(XLogCoarseGrained cgLog) {
-		super(cgLog);
+	public BinaryRelationProbabilisticModel() {
 		this.modelName = "BinaryRelationProbabilisticModel";
+	}
+	
+	public void initialize(XLogCoarseGrained cgLog) {
+		this.cgLog = cgLog;
 		countPairs();
-		
 	}
 
 	public double computeProbability(XTrace permutation) {
@@ -88,6 +90,8 @@ public class BinaryRelationProbabilisticModel extends AbstractProbabilisticModel
 			}
 		}
 	}
+
+
 	
 
 }

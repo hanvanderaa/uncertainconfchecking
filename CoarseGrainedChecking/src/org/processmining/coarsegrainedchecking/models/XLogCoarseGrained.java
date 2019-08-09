@@ -9,51 +9,36 @@ import org.deckfour.xes.model.XAttributeMap;
 import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
+import org.processmining.coarsegrainedchecking.plugins.CoarseGrainedConformanceCheckingParameters;
 import org.processmining.coarsegrainedchecking.utils.TimestampGranularity;
 
 public class XLogCoarseGrained extends ArrayList<XTraceCoarseGrained> {
 
 	private static final long serialVersionUID = 2215122359278709618L;
 	XAttributeMap attributes;
-	int maxPermutations;
-	double avgPermutations;
 	XLog originalLog;
 	
-	public XLogCoarseGrained(XLog originalLog, TimestampGranularity granularity) {
+	public XLogCoarseGrained(XLog originalLog, TimestampGranularity granularity, CoarseGrainedConformanceCheckingParameters parameters) {
 		this.originalLog = originalLog;
 		this.attributes = originalLog.getAttributes();
-		maxPermutations = 0;
-		avgPermutations = 0.0;
 		
 		
 		for (XTrace trace : originalLog) {
-			XTraceCoarseGrained cgTrace = new XTraceCoarseGrained(trace, granularity);
-			cgTrace.computePermutations();
-			if (cgTrace.getPossibleEventSequences().size() > maxPermutations) {
-				maxPermutations = cgTrace.getPossibleEventSequences().size();
-			}
-			avgPermutations += cgTrace.getPossibleEventSequences().size();
+			XTraceCoarseGrained cgTrace = new XTraceCoarseGrained(trace, granularity, parameters);
+			cgTrace.computePossibleResolutions();
 			this.add(cgTrace);
 		}
-		avgPermutations = (avgPermutations*1.0)/originalLog.size();
 	}
 	
-	public XLogCoarseGrained(XLog originalLog, TimestampGranularity granularity, int sampleSize) {
+	public XLogCoarseGrained(XLog originalLog, TimestampGranularity granularity, CoarseGrainedConformanceCheckingParameters parameters, int sampleSize) {
 		this.originalLog = originalLog;
 		this.attributes = originalLog.getAttributes();
-		maxPermutations = 0;
-		avgPermutations = 0.0;
 		
 		for (XTrace trace : getTraceSample(originalLog, granularity, sampleSize)) {
-			XTraceCoarseGrained cgTrace = new XTraceCoarseGrained(trace, granularity);
-			cgTrace.computePermutations();
-			if (cgTrace.getPossibleEventSequences().size() > maxPermutations) {
-				maxPermutations = cgTrace.getPossibleEventSequences().size();
-			}
-			avgPermutations += cgTrace.getPossibleEventSequences().size();
-			this.add(cgTrace);
+			XTraceCoarseGrained cgTrace = new XTraceCoarseGrained(trace, granularity, parameters);
+			cgTrace.computePossibleResolutions();
+						this.add(cgTrace);
 		}
-		avgPermutations = (avgPermutations*1.0)/originalLog.size();
 	}
 	
 	private List<XTrace> getTraceSample(XLog originalLog, TimestampGranularity granularity, int sampleSize) {
@@ -61,7 +46,7 @@ public class XLogCoarseGrained extends ArrayList<XTraceCoarseGrained> {
 		   
 		   List<XTrace> allTraces = new ArrayList<XTrace>(originalLog);
 	        List<XTrace> newList = new ArrayList<XTrace>(); 
-	        for (int i = 0; i < sampleSize; i++) { 
+	        for (int i = 0; i < Math.min(sampleSize, originalLog.size()); i++) { 
 	            int randomIndex = rand.nextInt(allTraces.size()); 
 	            newList.add(allTraces.get(randomIndex)); 
 	            allTraces.remove(randomIndex); 
@@ -72,14 +57,6 @@ public class XLogCoarseGrained extends ArrayList<XTraceCoarseGrained> {
 	
 	public XLog getOriginalLog() {
 		return originalLog;
-	}
-	
-	public int getMaxNoPermutations() {
-		return maxPermutations;
-	}
-	
-	public double getAvgNoPermutations() {
-		return avgPermutations;
 	}
 	
 	public XAttributeMap getAttributes() {

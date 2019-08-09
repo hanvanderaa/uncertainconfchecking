@@ -15,18 +15,16 @@ public class NGramProbabilisticModel extends AbstractProbabilisticModel {
 	private HashMap<String, Integer> nGramMap;
 	
 	
-	public NGramProbabilisticModel(XLogCoarseGrained cgLog, int n) {
-		super(cgLog);
-		this.n = n;
-		this.nGramMap = new HashMap<String, Integer>();
+	public NGramProbabilisticModel(int n) {
 		this.modelName = "NGramProbabilisticModel (" + n + ")";
-		countNGrams(n);	
-		countNGrams(n - 1);
+		this.n = n;
 	}
 	
-	public NGramProbabilisticModel(XLogCoarseGrained cgLog, int n, String modelName) {
-		this(cgLog, n);
-		this.modelName = modelName;
+	public void initialize(XLogCoarseGrained cgLog) {
+		this.cgLog = cgLog;
+		this.nGramMap = new HashMap<String, Integer>();
+		countNGrams(n);	
+		countNGrams(n - 1);
 	}
 	
 	public int getN() {

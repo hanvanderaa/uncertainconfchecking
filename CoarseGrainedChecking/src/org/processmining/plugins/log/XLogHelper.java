@@ -175,14 +175,14 @@ public class XLogHelper {
 	
 	
 	public static boolean hasLoopsApproximation(Collection<XTrace> log, Petrinet net) {
-		if (!hasDuplicateTasks(net)) {
-			for (XTrace t : log) {
-				if (hasRepeatedEventNames(t)) {
-					return true;
-				}
-			}
-			return false;
-		}
+//		if (!hasDuplicateTasks(net)) {
+//			for (XTrace t : log) {
+//				if (hasRepeatedEventNames(t)) {
+//					return true;
+//				}
+//			}
+//			return false;
+//		}
 		for (XTrace t : log) {
 			if (t.size() > net.getTransitions().size() * 2) {
 				return true;

@@ -12,9 +12,13 @@ public class FullTraceEquivalenceProbabilisticModel extends AbstractProbabilisti
 	private HashMap<String, Integer> traceStringCountMap;
 	private int certainTraceCount;
 	
-	public FullTraceEquivalenceProbabilisticModel(XLogCoarseGrained cgLog) {
-		super(cgLog);
+	
+	public FullTraceEquivalenceProbabilisticModel() {
 		this.modelName = "FullTraceEquivalenceProbabilisticModel";
+	}
+	
+	public void initialize(XLogCoarseGrained cgLog) {
+		this.cgLog = cgLog;
 		traceStringCountMap = new HashMap<String, Integer>();
 		certainTraceCount = 0;
 		for (XTraceCoarseGrained cgTrace : cgLog) {
@@ -29,7 +33,9 @@ public class FullTraceEquivalenceProbabilisticModel extends AbstractProbabilisti
 				certainTraceCount++;
 			}
 		}
+		
 	}
+	
 	
 	public double computeProbability(XTrace permutation) {
 		if (certainTraceCount == 0) {
@@ -45,6 +51,8 @@ public class FullTraceEquivalenceProbabilisticModel extends AbstractProbabilisti
 		}
 		return traceStringCountMap.get(traceString);
 	}
+
+
 
 
 

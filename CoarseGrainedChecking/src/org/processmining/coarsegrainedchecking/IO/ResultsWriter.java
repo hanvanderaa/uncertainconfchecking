@@ -27,29 +27,23 @@ public class ResultsWriter {
 //	private static final NumberFormat formatter = new DecimalFormat("#0.000");
 	
 
-	private static final String[] LOG_LEVEL_HEADER = {"Net", "Log", "Prob. Model", "Granularity", "noise",
+	private static final String[] LOG_LEVEL_HEADER = {"Net", "Log", "Prob. Model", "Approximation", "Granularity", "noise",
 			"places", "transitions", "silent trans.", "duplicate trans.", "xorsplits", "andsplits", "loops", "skips", "NFC size",
 			"conf. traces", "nonconf traces",
-			"certain traces", "uncertain traces", "total no. events ", "events in uncertain sets", "avg. no. perm.", "max. no. perm.", "resolved traces",
-			"confProb", "RMSE (fitness)",  "RMSE (Prob)",  "Runtime", "Top 1", "Top 3", "Top 5", "Top 10", "logCoverage", "uncertaintyRatio"};
-	private static final String[] TRACE_LEVEL_HEADER = {"Net", "Log", "Prob. Model", "Trace (Original)", "Trace (CG)", "Granularity", "Original conforming?", 
-		"ConfProb", "nonConfProb",  "NaiveConf", "MSE (Prob)", "MSE (Naive)"};
+			"certain traces", "uncertain traces", "total no. events ", "events in uncertain sets", "avg. no. perm.", "max. no. perm.", "overflow traces", "resolved traces",
+			"checked traces", "approximated traces",			
+			"confProb", "RMSE (probConf)", "original fitness", "predicted fitnes", "RMSE (fitness)",   "Runtime"};
 	
 	CSVWriter writer;
 	boolean aggregateLogLevel;
 	DecimalFormat formatter;
 	
-	public ResultsWriter(String outFilePath, boolean aggregateLogLevel) throws IOException {
-		this.aggregateLogLevel = aggregateLogLevel;
+	public ResultsWriter(String outFilePath) throws IOException {
 		writer = new CSVWriter(new FileWriter(outFilePath), ';');
-		if (aggregateLogLevel) {
-			writer.writeNext(LOG_LEVEL_HEADER);
-		} else {
-			writer.writeNext(TRACE_LEVEL_HEADER);
-		}
-		
+		writer.writeNext(LOG_LEVEL_HEADER);
+				
 		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
-//		otherSymbols.setDecimalSeparator(',');
+		otherSymbols.setDecimalSeparator('.');
 //		otherSymbols.setGroupingSeparator('.'); 
 		formatter = new DecimalFormat("#0.000", otherSymbols);
 		
@@ -58,22 +52,18 @@ public class ResultsWriter {
 	
 	public void writeResults(SingleModelLogResults results) {
 
-		if (aggregateLogLevel) {
 			Petrinet net = results.getNet();
 			ArrayList <String> csvLine = new ArrayList<String>();
 			csvLine.add(net.getLabel());
 			csvLine.add(results.getCgLog().getAttributes().get("source").toString());
-//			String modelName = results.getProbModel().getClass().getName().toString().substring(results.getProbModel().getClass().getName().toString().lastIndexOf(".")+1);
-//			if (modelName.equals("NGramProbabilisticModel")) {
-//				modelName += " (" + ((NGramProbabilisticModel) results.getProbModel()).getN() +")";
-//			}
 			csvLine.add(results.getProbModel().getName());
+			csvLine.add(results.getResultComputer().getName());
 			csvLine.add(String.valueOf(results.getGranularity()));
 			try {
 				String noise = results.getCgLog().getAttributes().get("noiseLevel").toString();
 				csvLine.add(noise);
 			} catch (Exception e) {
-				csvLine.add("Unknown");
+				csvLine.add("unspecified");
 			}
 			csvLine.add(String.valueOf(net.getPlaces().size()));
 			csvLine.add(String.valueOf(net.getTransitions().size()));
@@ -93,51 +83,21 @@ public class ResultsWriter {
 			csvLine.add(String.valueOf(results.getCgLog().totalEventsInUncertainSets()));
 			csvLine.add(String.valueOf(formatter.format(results.getAvgNoPermutations())));
 			csvLine.add(String.valueOf(results.getMaxNoPermutations()));
-			csvLine.add(String.valueOf(formatter.format(results.getFractionOfResolvedTraces())));
-			
+			csvLine.add(String.valueOf(results.getOverflownTraces()));
+			csvLine.add(String.valueOf(results.getNumberOfResolvedTraces()));
+			csvLine.add(String.valueOf(results.getNumberOfCheckedTraces()));
+			csvLine.add(String.valueOf(results.getNumberOfApproximatedTraces()));
 			
 			csvLine.add(formatter.format(results.getLogConfProb()));
-			csvLine.add(formatter.format(results.getLogRMSEFitness()));
 			csvLine.add(formatter.format(results.getLogRMSE()));
+			csvLine.add(formatter.format(results.getOriginalLogFitness()));
+			csvLine.add(formatter.format(results.getPredictedLogFitness()));
+			csvLine.add(formatter.format(results.getLogRMSEFitness()));
+			
 			csvLine.add(formatter.format(results.getRuntime()));		
-			csvLine.add(formatter.format(results.getNoOfLogsWithTopRank(1)));
-			csvLine.add(formatter.format(results.getNoOfLogsWithTopRank(3)));
-			csvLine.add(formatter.format(results.getNoOfLogsWithTopRank(5)));
-			csvLine.add(formatter.format(results.getNoOfLogsWithTopRank(5)));
-			csvLine.add(formatter.format(results.getLogCoverage()));
-			csvLine.add(formatter.format(results.getUncertaintyRatio()));
 			writer.writeNext(csvLine.stream().toArray(String[]::new));
-		}
+			System.out.println(csvLine.subList(20, csvLine.size()));
 		
-
-//		// Add info to CSV
-//		if (!aggregateLogLevel) {
-//
-//			for (XTraceCoarseGrained cgTrace : results.getCGTraces()) {
-//				ArrayList <String> csvLine = new ArrayList<String>();
-//				csvLine.add(results.getNet().getLabel());
-//				csvLine.add(results.getCgLog().getAttributes().get("source").toString());
-//				String modelName = results.getProbModel().getClass().getName().toString().substring(results.getProbModel().getClass().getName().toString().lastIndexOf(".")+1);
-//				if (modelName.equals("NGramProbabilisticModel")) {
-//					modelName += " (" + ((NGramMaxProbabilisticModel) results.getProbModel()).getN() +")";
-//				}
-//				csvLine.add(modelName);
-//				csvLine.add(cgTrace.getOriginalTraceString());
-//				csvLine.add(cgTrace.getTraceString());
-//				csvLine.add(TimestampGranularity.getCorrespondingFormat(results.getGranularity()).toPattern());
-//				if (cgTrace.originalIsConformant()) {
-//					csvLine.add("true");
-//				} else {
-//					csvLine.add("false");
-//				}
-//				csvLine.add(formatter.format(results.getConfProb(cgTrace)));
-//				csvLine.add(formatter.format(results.getNonConfProb(cgTrace)));
-//				csvLine.add(formatter.format(results.getNaiveConfProb(cgTrace)));
-//				csvLine.add(formatter.format(results.getMSE(cgTrace)));
-//				csvLine.add(formatter.format(results.getMSENaive(cgTrace)));
-//				writer.writeNext(csvLine.stream().toArray(String[]::new));
-//			}
-//		}	
 		try {
 			writer.flush();
 		} catch (IOException e) {
@@ -179,11 +139,15 @@ public class ResultsWriter {
 	private int silentTasks(Petrinet net) {
 		int n = 0;
 		for (Transition t : net.getTransitions()) {
-			if (t.isInvisible() || t.getLabel().isEmpty()) {
+			if (isSilent(t)) {
 				n++;
 			}
 		}
 		return n;
+	}
+	
+	private boolean isSilent(Transition t) {
+		return (t.getLabel().isEmpty() || t.getLabel().startsWith("tau"));
 	}
 	
 	private int duplicateTasks(Petrinet net) {
@@ -206,7 +170,8 @@ public class ResultsWriter {
 			boolean hasLabeled = false;
 			boolean hasSilent = false;
 			for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> e : net.getOutEdges(p)) {
-				if (e.getTarget().getLabel().isEmpty()) {
+				Transition t = (Transition) e.getTarget();
+				if (isSilent(t)) {
 					hasSilent = true;
 				} else {
 					hasLabeled = true;

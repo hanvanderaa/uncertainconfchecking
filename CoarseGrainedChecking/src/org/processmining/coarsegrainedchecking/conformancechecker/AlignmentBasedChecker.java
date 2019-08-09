@@ -1,12 +1,9 @@
 package org.processmining.coarsegrainedchecking.conformancechecker;
 
 
-	import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+	import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.deckfour.xes.classification.XEventClass;
 import org.deckfour.xes.classification.XEventClasses;
@@ -19,8 +16,11 @@ import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
 import org.processmining.acceptingpetrinet.models.AcceptingPetriNet;
 import org.processmining.acceptingpetrinet.models.impl.AcceptingPetriNetFactory;
+import org.processmining.coarsegrainedchecking.evaluation.SingleTraceResult.ConformanceMode;
+import org.processmining.coarsegrainedchecking.plugins.CoarseGrainedConformanceCheckingParameters;
 import org.processmining.framework.plugin.PluginContext;
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
+import org.processmining.models.graphbased.directed.petrinet.PetrinetGraph;
 import org.processmining.models.graphbased.directed.petrinet.elements.Place;
 import org.processmining.models.graphbased.directed.petrinet.elements.Transition;
 import org.processmining.models.semantics.petrinet.Marking;
@@ -34,10 +34,9 @@ import org.processmining.plugins.petrinet.replayresult.PNRepResult;
 
 import nl.tue.astar.AStarException;
 
-	public class AlignmentBasedChecker {
+	public class AlignmentBasedChecker implements ConformanceChecker {
 
-		static int MAX_STATES = 200;
-		
+	
 		Petrinet net;
 		XLog log;
 		PluginContext context;
@@ -48,7 +47,8 @@ import nl.tue.astar.AStarException;
 		
 		Map<List<String>, Double> fitnessMap;
 		
-		public AlignmentBasedChecker(Petrinet net, XLog log, PluginContext context) {
+		
+		public AlignmentBasedChecker(CoarseGrainedConformanceCheckingParameters pluginParameters, Petrinet net, XLog log, PluginContext context) {
 			super();
 			this.net = net;
 			this.log = log;
@@ -74,54 +74,24 @@ import nl.tue.astar.AStarException;
 			parameters.setCreateConn(false);
 			parameters.setInitialMarking(apn.getInitialMarking());
 			
-			List<Marking> finalMarkingList = computeMarkingCombinations(apn.getFinalMarkings());
-			
-			Marking[] finalMarkings = new Marking[finalMarkingList.size()];
-			int i = 0;
-			for (Marking m : finalMarkingList) {
-				finalMarkings[i] = m;
-				i++;
-			}
+			Marking[] finalMarkings = new Marking[] {getFinalMarking(net)};
 						
 			parameters.setFinalMarkings(finalMarkings);
-			parameters.setMaxNumOfStates(MAX_STATES);
+			parameters.setMaxNumOfStates(pluginParameters.MAX_ASTAR_STATES);
 		}
 		
 		
-		private List<Marking> computeMarkingCombinations(Set<Marking> markings) {
-			
-			Set<Place> fullset = new HashSet<Place>();
-			for (Marking m : markings) {
-				fullset.addAll(m);
+		private Marking getFinalMarking(PetrinetGraph net) {
+			Marking finalMarking = new Marking();
+
+			for (Place p : net.getPlaces()) {
+				if (net.getOutEdges(p).isEmpty())
+					finalMarking.add(p);
 			}
-			
-			List<Marking> res = new ArrayList<Marking>();
-			
-			Set<Set<Place>> sets = powerSet(fullset);
-			for (Set<Place> set : sets) {
-				if (!set.isEmpty()) {
-					res.add(new Marking(set));
-				}
-			}
-			return res;
+
+			return finalMarking;
 		}
-	
-	static <T> Set<Set<T>> powerSet( Set<T> set ) {
-        T[] element = (T[]) set.toArray();
-        final int SET_LENGTH = 1 << element.length;
-        Set<Set<T>> powerSet = new HashSet<>();
-        for( int binarySet = 0; binarySet < SET_LENGTH; binarySet++ ) {
-            Set<T> subset = new HashSet<>();
-            for( int bit = 0; bit < element.length; bit++ ) {
-                int mask = 1 << bit;
-                if( (binarySet & mask) != 0 ) {
-                    subset.add( element[bit] );
-                }
-            }
-            powerSet.add( subset );
-        }
-        return powerSet;
-    }
+
 		
 	public double traceFitness(XTrace trace) {
 		List<String> traceLabelList = XLogHelper.traceToLabelList(trace);
@@ -156,33 +126,16 @@ import nl.tue.astar.AStarException;
 		return (traceFitness(trace) == 1.0);
 	}
 
-	public HashSet<XTrace> computeConformantTraces(PluginContext context, XLog log, Petrinet net) {
 
-		HashSet<XTrace> confTraces = new HashSet<XTrace>();
-
-		for (XTrace t : log) {
-			XLog log2 = XFactoryRegistry.instance().currentDefault().createLog();
-			log2.add(t);
-
-			try {
-				PNRepResult replayRes = replayer.replayLog(context, net, log2, transEventMap, replayerWithoutILP, parameters);
-				if (!replayRes.isEmpty()) {
-					double fit = (Double) replayRes.getInfo().get(PNRepResult.TRACEFITNESS);
-					if (fit == 1.0) {
-						confTraces.add(t);
-					}
-				}
-
-			} catch (AStarException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NullPointerException e) {
-				e.printStackTrace();
-			}
+	public double computeConformance(XTrace trace, ConformanceMode conformanceMode) {
+		if (conformanceMode == ConformanceMode.FITNESS) {
+			return traceFitness(trace);
 		}
-		return confTraces;
+		if (isConformant(trace)) {
+			return 1.0;
+		}
+		return 0.0;
 	}
-
 
 
 
@@ -194,6 +147,8 @@ import nl.tue.astar.AStarException;
 			XEventClass eventClass = ecLog.getByIdentity(t.getLabel());
 			if (eventClass != null) {
 				mapping.put(t, eventClass);
+			} else {
+				mapping.put(t, evClassDummy);
 			}
 		}
 		return mapping;

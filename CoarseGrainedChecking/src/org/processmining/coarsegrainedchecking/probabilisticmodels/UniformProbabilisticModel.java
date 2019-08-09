@@ -10,13 +10,16 @@ public class UniformProbabilisticModel extends AbstractProbabilisticModel {
 
 	private HashMap<XTrace, Integer> permCountMap;
 	
-	public UniformProbabilisticModel(XLogCoarseGrained cgLog) {
-		super(cgLog);
+	public UniformProbabilisticModel() {
 		this.modelName = "UniformProbabilisticModel";
+	}
+	
+	public void initialize(XLogCoarseGrained cgLog) {
+		this.cgLog = cgLog;
 		permCountMap = new HashMap<XTrace, Integer>();
 		for (XTraceCoarseGrained cgTrace : cgLog) {
-			for (XTrace perm : cgTrace.getPossibleEventSequences()) {
-				permCountMap.put(perm, cgTrace.getPossibleEventSequences().size());
+			for (XTrace perm : cgTrace.getPossibleResolutions()) {
+				permCountMap.put(perm, cgTrace.getPossibleResolutions().size());
 			}
 		}
 	}
