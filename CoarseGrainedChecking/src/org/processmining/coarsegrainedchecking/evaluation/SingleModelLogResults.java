@@ -18,7 +18,8 @@ public class SingleModelLogResults {
 	TimestampGranularity granularity;
 	AbstractProbabilisticModel probModel;
 	AbstractTraceResultComputer resultComputer;
-	long runtime;
+	String runtime;
+	double logFitness;
 	
 	List<SingleTraceResult> traceResults;
 	
@@ -39,12 +40,18 @@ public class SingleModelLogResults {
 	
 
 	public void setRuntime(long runtime) {
-		this.runtime = runtime;
+		this.runtime = String.valueOf(runtime);
 	}
 	
-	public long getRuntime() {
+	public String getRuntime() {
 		return runtime;
 	}
+	
+	public void setLogFitness(double logFitness) {
+		this.logFitness = logFitness;
+	}
+	
+
 	
 	public int getNumberOfResolvedTraces() {
 		int sum = 0;
@@ -143,11 +150,15 @@ public class SingleModelLogResults {
 	
 	public double getLogRMSEFitness() {
 		double sum = 0;
+		int done = 0;
 		for (SingleTraceResult tr : traceResults) {
-			double error = Math.pow(tr.getOriginalFitness() - tr.getWeightedFitness(), 2);
-			sum += error;
+			if (tr.getCgTrace().hasUncertainty()) {
+				double error = Math.pow(tr.getOriginalFitness() - tr.getWeightedFitness(), 2);
+				sum += error;
+				done++;
+			}
 		}
-		return Math.sqrt(sum / traceResults.size());
+		return Math.sqrt(sum / done);
 	}
 	
 	public AbstractTraceResultComputer getResultComputer() {
@@ -156,20 +167,34 @@ public class SingleModelLogResults {
 
 	public double getPredictedLogFitness() {
 		double sum  = 0;
+		int count = 0;
 		for (SingleTraceResult tr : traceResults) {
-			sum += tr.getWeightedFitness();
+			double wf = tr.getWeightedFitness(); 
+			if (wf > 0) {
+				sum += wf;
+				count++;
+			}
 		}
-		return sum / traceResults.size();
+		for (XTraceCoarseGrained cgTrace : cgLog) {
+			if (!cgTrace.hasUncertainty()) {
+				sum += cgTrace.getOriginalFitness();
+				count++;
+			}
+		}
+		return sum / count;
 	}
-
 
 	public double getOriginalLogFitness() {
-		double sum  = 0;
-		for (SingleTraceResult tr : traceResults) {
-			sum += tr.getCgTrace().getOriginalFitness();
-		}
-		return sum / traceResults.size();
+		return logFitness;
 	}
+	
+//	public double getOriginalLogFitness() {
+//		double sum  = 0;
+//		for (SingleTraceResult tr : traceResults) {
+//			sum += tr.getCgTrace().getOriginalFitness();
+//		}
+//		return sum / traceResults.size();
+//	}
 
 	public int getOverflownTraces() {
 		int sum = 0;

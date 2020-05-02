@@ -26,7 +26,7 @@ public abstract class AbstractProbabilisticModel {
 		HashMap<XTrace, Double> probabilityMap = new HashMap<>();
 
 		for (XTrace resolution : cgTrace.getPossibleResolutions()) {
-			double sequenceProb = computeProbability(resolution);
+			double sequenceProb = computeProbability(cgTrace, resolution);
 			probabilityMap.put(resolution, sequenceProb);
 		}
 		if (totalProbability(probabilityMap) > 0) {
@@ -38,7 +38,7 @@ public abstract class AbstractProbabilisticModel {
 	}
 
 	
-	protected abstract double computeProbability(XTrace resolution);
+	protected abstract double computeProbability(XTraceCoarseGrained cgTrace, XTrace resolution);
 	
 	
 	public void normalizeProbabilities(Map<XTrace, Double> probabilityMap) {
@@ -52,8 +52,10 @@ public abstract class AbstractProbabilisticModel {
 		} 
 		// Set uniform probabilities 
 		else {
-			for (XTrace t: probabilityMap.keySet()) {
-				probabilityMap.put(t, 1.0 / probabilityMap.keySet().size() );
+			if (!this.modelName.equals("OnlyCertainTracesModel")) {
+				for (XTrace t: probabilityMap.keySet()) {
+					probabilityMap.put(t, 1.0 / probabilityMap.keySet().size() );
+				}
 			}
 		}
 	}

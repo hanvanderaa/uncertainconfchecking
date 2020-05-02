@@ -37,7 +37,7 @@ public class XLogCoarseGrained extends ArrayList<XTraceCoarseGrained> {
 		for (XTrace trace : getTraceSample(originalLog, granularity, sampleSize)) {
 			XTraceCoarseGrained cgTrace = new XTraceCoarseGrained(trace, granularity, parameters);
 			cgTrace.computePossibleResolutions();
-						this.add(cgTrace);
+			this.add(cgTrace);
 		}
 	}
 	

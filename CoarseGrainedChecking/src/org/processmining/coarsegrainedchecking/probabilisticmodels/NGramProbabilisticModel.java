@@ -32,7 +32,7 @@ public class NGramProbabilisticModel extends AbstractProbabilisticModel {
 	}
 	
 
-	public double computeProbability(XTrace permutation) {
+	public double computeProbability(XTraceCoarseGrained cgTrace, XTrace permutation) {
 		if (n > permutation.size()) {
 			return 0;
 		}

@@ -23,7 +23,7 @@ public class BinaryRelationProbabilisticModel extends AbstractProbabilisticModel
 		countPairs();
 	}
 
-	public double computeProbability(XTrace permutation) {
+	public double computeProbability(XTraceCoarseGrained cgTrace, XTrace permutation) {
 		double prob = 1.0;
 		for (int i = 0; i < permutation.size() - 1; i++) {
 			String label1 = XConceptExtension.instance().extractName(permutation.get(i)); 

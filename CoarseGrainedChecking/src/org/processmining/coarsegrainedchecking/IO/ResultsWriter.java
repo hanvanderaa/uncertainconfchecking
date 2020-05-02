@@ -32,7 +32,7 @@ public class ResultsWriter {
 			"conf. traces", "nonconf traces",
 			"certain traces", "uncertain traces", "total no. events ", "events in uncertain sets", "avg. no. perm.", "max. no. perm.", "overflow traces", "resolved traces",
 			"checked traces", "approximated traces",			
-			"confProb", "RMSE (probConf)", "original fitness", "predicted fitnes", "RMSE (fitness)",   "Runtime"};
+			"confProb", "RMSE (probConf)", "original fitness", "predicted fitnes", "RMSE (fitness)",  "Runtime"};
 	
 	CSVWriter writer;
 	boolean aggregateLogLevel;
@@ -94,7 +94,7 @@ public class ResultsWriter {
 			csvLine.add(formatter.format(results.getPredictedLogFitness()));
 			csvLine.add(formatter.format(results.getLogRMSEFitness()));
 			
-			csvLine.add(formatter.format(results.getRuntime()));		
+			csvLine.add(results.getRuntime());		
 			writer.writeNext(csvLine.stream().toArray(String[]::new));
 			System.out.println(csvLine.subList(20, csvLine.size()));
 		

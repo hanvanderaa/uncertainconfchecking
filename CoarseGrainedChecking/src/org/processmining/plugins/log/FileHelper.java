@@ -20,7 +20,7 @@ import java.util.List;
 import org.deckfour.xes.extension.std.XConceptExtension;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.out.XSerializer;
-import org.deckfour.xes.out.XesXmlGZIPSerializer;
+import org.deckfour.xes.out.XesXmlSerializer;
 import org.processmining.framework.plugin.PluginContext;
 import org.processmining.models.connections.GraphLayoutConnection;
 import org.processmining.models.connections.petrinets.behavioral.InitialMarkingConnection;
@@ -115,9 +115,10 @@ public class FileHelper {
 				logName = logName.substring(0, 248);
 			}
 
-			File logFile = new File(absolutePath + "/" + logName + ".xes.gz");
+			File logFile = new File(absolutePath);
 			FileOutputStream logOut = new FileOutputStream(logFile);
-			XSerializer logSerializer = new XesXmlGZIPSerializer();
+//			XSerializer logSerializer = new XesXmlGZIPSerializer();
+			XSerializer logSerializer = new XesXmlSerializer();
 			logSerializer.serialize(log, logOut);
 			logOut.close();
 

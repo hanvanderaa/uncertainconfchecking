@@ -3,6 +3,8 @@ package org.processmining.coarsegrainedchecking.plugins;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -92,8 +94,7 @@ public class CoarseGrainedConformanceCheckingPlugin {
 
 				// Obtain logs for net based on name of respective PNML file
 				HashSet<XLog> logs = obtainLogs(context, netName, net);
-				
-				
+			
 				
 				// For each identified log file ...
 				for (XLog log: logs) {
@@ -112,29 +113,28 @@ public class CoarseGrainedConformanceCheckingPlugin {
 						// Check conformance of original traces
 						Iterator<XTraceCoarseGrained> iter = cgLog.iterator();
 						int done = 0;
-						while (iter.hasNext() && done < parameters.MAX_TRACES_TO_CHECK) {
+						while (iter.hasNext()) {
 							XTraceCoarseGrained cgTrace = iter.next();
 
-							if (cgTrace.hasUncertainty() && !cgTrace.hasResolutionOverflow()) {
-
+//							if (!cgTrace.hasUncertainty()) {
 								double traceFitness = confChecker.traceFitness(cgTrace);
 								cgTrace.setOriginalFitness(traceFitness);
 								cgTrace.setOriginalConformance( traceFitness == 1.0 );
 								done++;								
 								if (done % parameters.TRACE_PROGRESS_DEBUG == 0) {
 									System.out.println("Traces done in original log: " + done);
-								}
-							}		
-
+								}		
+//							}
 						}
-
-						
+						System.out.println("Checked " + done + " traces in original log");
+						System.out.println("Original fitness:" + averageLogFitness(cgLog));
 						// loop over different approximation methods. reset confChecker each time for proper time measurement
 						int comp = 1;
 						for (AbstractTraceResultComputer resultComputer : Arrays.asList(parameters.resultComputers)) {
 							confChecker = obtainConformanceChecker(parameters, net, log, context);
 							// loop over probabilistic models
 							int model = 1;
+							System.gc();
 							for (AbstractProbabilisticModel probModel : Arrays.asList(parameters.probModels)) {
 								probModel.initialize(cgLog);
 								runSingleLogAndNet(cgLog.getOriginalLog(), cgLog, net, writer, probModel, granularity, confChecker, resultComputer);
@@ -152,9 +152,11 @@ public class CoarseGrainedConformanceCheckingPlugin {
 	private void runSingleLogAndNet(XLog originalLog, XLogCoarseGrained cgLog, Petrinet net, ResultsWriter writer, AbstractProbabilisticModel probModel, 
 			TimestampGranularity granularity, ConformanceChecker confChecker, AbstractTraceResultComputer resultComputer) {
 		SingleModelLogResults logResults = new SingleModelLogResults(net, cgLog, granularity, probModel, resultComputer);
-
+		logResults.setLogFitness(averageLogFitness(cgLog));
+		
 		long starttime = System.currentTimeMillis();
-
+		Instant start = Instant.now();
+		
 		Iterator<XTraceCoarseGrained> iter = cgLog.iterator();
 		int done = 0;
 		while (iter.hasNext() && done < parameters.MAX_TRACES_TO_CHECK) {
@@ -172,11 +174,15 @@ public class CoarseGrainedConformanceCheckingPlugin {
 		
 		}
 
-		long runtime = System.currentTimeMillis() - starttime;
-		logResults.setRuntime(runtime);
+		long runtime1 = System.currentTimeMillis() - starttime;
+		Instant end = Instant.now();
+		Duration runtime = Duration.between(start, end);
 
-
+		logResults.setRuntime(runtime.toMillis());
+		System.out.println("runtimes " + runtime1 + " - " + runtime.toMillis() );
+		
 		writer.writeResults(logResults);
+		
 	}
 	
 	private ConformanceChecker obtainConformanceChecker(CoarseGrainedConformanceCheckingParameters pluginParameters, Petrinet net, XLog log, PluginContext context) {
@@ -187,6 +193,14 @@ public class CoarseGrainedConformanceCheckingPlugin {
 		}
 	}
 	
+	
+	private double averageLogFitness(XLogCoarseGrained cgLog) {
+		double fitSum = 0.0;
+		for (XTraceCoarseGrained cgTrace : cgLog) {
+			fitSum += cgTrace.getOriginalFitness();
+		}
+		return fitSum / cgLog.size();
+	}
 	
 	private Map<String, StochasticNet> loadModels(PluginContext context) {
 		netMap = new HashMap<String, StochasticNet>();
@@ -232,8 +246,10 @@ public class CoarseGrainedConformanceCheckingPlugin {
 				if (noisyLog != null) {
 					noisyLog.getAttributes().put("noiseLevel", noiseAttr);
 					logs.add(noisyLog);
+//					FileHelper.saveEventLog(noisyLog, parameters.OUTPUT_FOLDER + "/generated_logs/" + modelName + ".xes");
 				}
 			}
+			
 		}
 		
 	

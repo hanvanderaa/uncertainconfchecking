@@ -11,6 +11,7 @@ import org.processmining.coarsegrainedchecking.probabilisticmodels.AbstractProba
 import org.processmining.coarsegrainedchecking.probabilisticmodels.BinaryRelationProbabilisticModel;
 import org.processmining.coarsegrainedchecking.probabilisticmodels.FullTraceEquivalenceProbabilisticModel;
 import org.processmining.coarsegrainedchecking.probabilisticmodels.NGramProbabilisticModel;
+import org.processmining.coarsegrainedchecking.probabilisticmodels.OnlyCertainTracesModel;
 import org.processmining.coarsegrainedchecking.probabilisticmodels.UniformProbabilisticModel;
 import org.processmining.coarsegrainedchecking.utils.TimestampGranularity;
 import org.processmining.models.graphbased.directed.petrinet.StochasticNet.TimeUnit;
@@ -19,29 +20,28 @@ public class CoarseGrainedConformanceCheckingParameters  {
 	
 	public int MODEL_RANGE_START = 0;
 	public int MODEL_RANGE_END = 500;
-	
 
-	public int MAX_RESOLUTIONS_PER_TRACE = 100000;
+	public int MAX_RESOLUTIONS_PER_TRACE = 5000;
 	public int MAX_ASTAR_STATES = Integer.MAX_VALUE;
 	public int ASTAR_THREADS = 1;
-	public int MAX_TRACES_TO_CHECK = 100000;
+	public int MAX_TRACES_TO_CHECK = 2000000;
 	
-	public int TRACE_PROGRESS_DEBUG = 5;
+	public int TRACE_PROGRESS_DEBUG = 250;
 	
-	public boolean OLD_CONF_CHECKER = true;
+	public boolean OLD_CONF_CHECKER = false;
 	
 	public boolean GENERATE_NEW_LOGS = true;
 	
 	public int LOG_SIZE = 1000;
 	public  int MAX_TRACE_LENGTH = 500;
 	
-	
-	public  int[] NOISE_LEVELS = new int[]{0};
+	public  int[] NOISE_LEVELS = new int[]{25, 50, 75, 100};
 	public  TimestampGranularity[] GRANULARITY_LEVELS = new TimestampGranularity[]{TimestampGranularity.MINUTES};
 	
 	
 	public  String BASE_FOLDER = "input/";
 	public  String DATA_FOLDER = "generated/";
+//	public  String DATA_FOLDER = "realworld/";
 	public  String DATA_PATH = BASE_FOLDER + DATA_FOLDER;
 		
 	public  String OUTPUT_FILE = "Output"; 
@@ -58,13 +58,14 @@ public class CoarseGrainedConformanceCheckingParameters  {
 			new NGramProbabilisticModel(3),
 			new NGramProbabilisticModel(2),
 			new BinaryRelationProbabilisticModel(),
-			new UniformProbabilisticModel()
+			new UniformProbabilisticModel(),
+			new OnlyCertainTracesModel()
 	};
 	
 	public AbstractTraceResultComputer[] resultComputers = new AbstractTraceResultComputer[]{
 			new TraceResultComputerNoApproximation(),
 			new StatisticalTraceResultApproximator(ConformanceMode.FITNESS, 0.01, 0.10),
-			new StatisticalTraceResultApproximator(ConformanceMode.FITNESS, 0.05, 0.10)
+//			new StatisticalTraceResultApproximator(ConformanceMode.FITNESS, 0.05, 0.10)
 			}; 
 	
 	

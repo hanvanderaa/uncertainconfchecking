@@ -37,7 +37,7 @@ public class FullTraceEquivalenceProbabilisticModel extends AbstractProbabilisti
 	}
 	
 	
-	public double computeProbability(XTrace permutation) {
+	public double computeProbability(XTraceCoarseGrained cgTrace, XTrace permutation) {
 		if (certainTraceCount == 0) {
 			return 0;
 		}
